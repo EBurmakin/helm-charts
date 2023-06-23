@@ -5,13 +5,11 @@ metadata:
   labels: {{- include "backend.labels.standard" . | nindent 4 }}
   {{- with .Values.apiserver.annotations }}
   annotations: {{- toYaml . | nindent 4 }}
-  {{- end }}
 spec:
   replicas: {{ .Values.apiserver.replicaCount }}
   {{- if .Values.apiserver.persistentVolume.enabled }}
   strategy:
     type: Recreate
-  {{- end }}
   selector:
     matchLabels: {{- include "backend.labels.matchLabels" . | nindent 6 }}
   template:
@@ -20,14 +18,11 @@ spec:
     spec:
       {{- with .Values.global.imagePullSecrets }}
       imagePullSecrets: {{- toYaml . | nindent 6 }}
-      {{- end }}
       {{- if .Values.apiserver.serviceAccount.create}}
       serviceAccountName: {{ include "common.names.fullname" . }}-apiserver
-      {{- end }}
       securityContext: {{- toYaml .Values.apiserver.podSecurityContext | nindent 8 }}
       {{- with .Values.apiserver.initContainers }}
       initContainers: {{- toYaml . | nindent 6 }}
-      {{- end }}
       containers:
       - name: {{ .Chart.Name }}-apiserver
         securityContext: {{- toYaml .Values.apiserver.securityContext | nindent 12 }}
@@ -35,7 +30,6 @@ spec:
         imagePullPolicy: {{ .Values.apiserver.image.pullPolicy }}
         {{- with .Values.apiserver.resources }}
         resources: {{ . | toYaml | nindent 10 }}
-        {{- end }}
         env:
         - name: ALPINE_DATA_DIRECTORY
           value: "/data"
@@ -53,10 +47,8 @@ spec:
               key: postgresql-password
         - name: ALPINE_DATABASE_USERNAME
           value: {{ .Values.postgresql.postgresqlUsername }}
-        {{- end }}
         {{- with .Values.apiserver.env }}
         {{- toYaml . | nindent 8 }}
-        {{- end }}
         volumeMounts:
         - name: data
           mountPath: /data
