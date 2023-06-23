@@ -43,38 +43,9 @@ spec:
         #  mountPath: /app/static
         {{- if .Values.frontend.livenessProbe.enabled }}
         livenessProbe:
-          httpGet:
-            port: http
-            path: {{ .Values.frontend.livenessProbe.path }}
-          initialDelaySeconds: {{ .Values.frontend.livenessProbe.initialDelaySeconds }}
-          periodSeconds: {{ .Values.frontend.livenessProbe.periodSeconds }}
-          timeoutSeconds: {{ .Values.frontend.livenessProbe.timeoutSeconds }}
-          successThreshold: {{ .Values.frontend.livenessProbe.successThreshold }}
-          failureThreshold: {{ .Values.frontend.livenessProbe.failureThreshold }}
-        {{- end }}
-        {{- if .Values.frontend.readinessProbe.enabled }}
+        {{- toYaml .Values.livenessProbe | nindent 8}}
         readinessProbe:
-          httpGet:
-            port: http
-            path: {{ .Values.frontend.readinessProbe.path }}
-          initialDelaySeconds: {{ .Values.frontend.readinessProbe.initialDelaySeconds }}
-          periodSeconds: {{ .Values.frontend.readinessProbe.periodSeconds }}
-          timeoutSeconds: {{ .Values.frontend.readinessProbe.timeoutSeconds }}
-          successThreshold: {{ .Values.frontend.readinessProbe.successThreshold }}
-          failureThreshold: {{ .Values.frontend.readinessProbe.failureThreshold }}
-        {{- end }}
-      {{- with .Values.frontend.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.frontend.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.frontend.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- toYaml .Values.readinessProbe | nindent 8}}
       volumes:
       - name: tmp
         emptyDir: {}
